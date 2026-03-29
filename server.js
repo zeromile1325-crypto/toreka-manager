@@ -405,6 +405,7 @@ app.get("/api/stats", (req, res) => {
 //  Webããã·ã¥ãã¼ãï¼HTMLç´æ¥éä¿¡ï¼
 // ================================================================
 app.get("/", (req, res) => {
+    res.setHeader("Content-Type", "text/html; charset=utf-8");
   res.send(getDashboardHTML());
 });
 
