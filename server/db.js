@@ -46,6 +46,11 @@ export async function initDB() {
   db.run('CREATE INDEX IF NOT EXISTS idx_products_active ON products(is_active, supplier_id)');
   db.run('CREATE INDEX IF NOT EXISTS idx_products_message ON products(line_message_id)');
 
+  // Migration: add new columns for export feature
+  try { db.run('ALTER TABLE products ADD COLUMN english_name TEXT DEFAULT NULL'); } catch(e) {}
+  try { db.run("ALTER TABLE products ADD COLUMN category TEXT DEFAULT 'others'"); } catch(e) {}
+  try { db.run('ALTER TABLE products ADD COLUMN selling_price INTEGER DEFAULT NULL'); } catch(e) {}
+
   saveDB();
   return db;
 }
@@ -138,6 +143,29 @@ export function deleteProductById(productId) {
   const changes = db.getRowsModified();
   saveDB();
   return { changes };
+}
+
+// --- Export feature operations ---
+
+export function updateProductEnglishName(id, englishName) {
+  db.run('UPDATE products SET english_name = ? WHERE id = ?', [englishName, id]);
+  saveDB();
+}
+
+export function updateProductCategory(id, category) {
+  db.run('UPDATE products SET category = ? WHERE id = ?', [category, id]);
+  saveDB();
+}
+
+export function updateProductSellingPrice(id, sellingPrice) {
+  db.run('UPDATE products SET selling_price = ? WHERE id = ?', [sellingPrice, id]);
+  saveDB();
+}
+
+export function getAllActiveProductsForExport() {
+  return queryAll(
+    `SELECT p.*, s.name as supplier_name FROM products p JOIN suppliers s ON p.supplier_id = s.id WHERE p.is_active = 1 ORDER BY p.category, p.product_name`
+  );
 }
 
 export function getActiveProducts({ search, supplierId, sortBy, sortOrder, limit, offset }) {
