@@ -7,25 +7,26 @@
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", sans-serif; background: #f8f9fa; color: #1a1a2e; }
-.container { max-width: 1100px; margin: 0 auto; padding: 0 16px; }
+.container { max-width: 1200px; margin: 0 auto; padding: 0 16px; }
 header { display: flex; justify-content: space-between; align-items: center; padding: 20px 0 12px; border-bottom: 2px solid #e0e0e0; }
 h1 { font-size: 24px; }
 .header-right { display: flex; align-items: center; gap: 12px; }
 .updated { font-size: 12px; color: #888; }
 .btn { padding: 6px 16px; border: 1px solid #ddd; border-radius: 6px; background: #fff; cursor: pointer; font-size: 13px; }
 .btn-green { background: #4CAF50; color: #fff; border: none; font-weight: 500; }
-nav { display: flex; gap: 0; margin-top: 16px; }
+.btn-blue { background: #2196F3; color: #fff; border: none; font-weight: 500; }
+.btn-orange { background: #FF9800; color: #fff; border: none; font-weight: 500; }
+nav { display: flex; gap: 0; margin-top: 16px; flex-wrap: wrap; }
 .tab { padding: 10px 24px; border: 1px solid #ddd; border-bottom: none; background: #f0f0f0; cursor: pointer; font-size: 14px; border-radius: 8px 8px 0 0; color: #666; }
 .tab.active { background: #fff; color: #1a1a2e; font-weight: 600; }
-main { background: #fff; border: 1px solid #ddd; border-top: none; border-radius: 0 0 8px 8px; padding: 20px; }
+main { background: #fff; border: 1px solid #ddd; border-top: none; border-radius: 0 0 8px 8px; padding: 20px; overflow-x: auto; }
 .filters { display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
-.filters input { padding: 8px 14px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; flex: 1 1 250px; max-width: 400px; }
-.filters select { padding: 8px 14px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; min-width: 160px; }
+.filters input, .filters select { padding: 8px 14px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; }
 .info { font-size: 13px; color: #888; margin-bottom: 8px; }
-table { width: 100%; border-collapse: collapse; font-size: 14px; }
-th { padding: 10px 12px; text-align: left; border-bottom: 2px solid #e0e0e0; cursor: pointer; user-select: none; font-size: 13px; color: #555; white-space: nowrap; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th { padding: 8px 10px; text-align: left; border-bottom: 2px solid #e0e0e0; cursor: pointer; user-select: none; font-size: 12px; color: #555; white-space: nowrap; }
 tr { border-bottom: 1px solid #f0f0f0; }
-td { padding: 10px 12px; }
+td { padding: 8px 10px; }
 .price { text-align: right; white-space: nowrap; }
 .qty { text-align: center; }
 .date { font-size: 12px; color: #888; }
@@ -40,11 +41,19 @@ td { padding: 10px 12px; }
 .manual .actions { display: flex; align-items: center; gap: 12px; margin-top: 8px; }
 .msg-ok { font-size: 13px; color: #4CAF50; }
 .msg-err { font-size: 13px; color: #e53935; }
-.supplier-table th:last-child { width: 100px; }
-.alias-input { width: 100%; padding: 6px 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 13px; }
 .btn-save { padding: 4px 12px; border: none; border-radius: 4px; background: #4CAF50; color: #fff; cursor: pointer; font-size: 12px; }
 .btn-cancel { padding: 4px 12px; border: 1px solid #ddd; border-radius: 4px; background: #fff; cursor: pointer; font-size: 12px; }
 .btn-edit { padding: 4px 12px; border: 1px solid #ddd; border-radius: 4px; background: #fff; cursor: pointer; font-size: 12px; }
+.cat-pokemon { background: #e8f5e9; color: #2e7d32; padding: 2px 8px; border-radius: 10px; font-size: 11px; }
+.cat-onepiece { background: #e3f2fd; color: #1565c0; padding: 2px 8px; border-radius: 10px; font-size: 11px; }
+.cat-others { background: #f5f5f5; color: #666; padding: 2px 8px; border-radius: 10px; font-size: 11px; }
+.inline-input { padding: 4px 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px; width: 100%; }
+.inline-select { padding: 4px 6px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px; }
+.inline-num { padding: 4px 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px; width: 90px; text-align: right; }
+.missing { background: #fff8e1; }
+.export-actions { display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; align-items: center; }
+.rates-info { font-size: 11px; color: #888; margin-top: 8px; }
+.sheet-link { font-size: 14px; color: #1565c0; margin-top: 12px; display: block; }
 </style>
 </head>
 <body>
@@ -59,7 +68,10 @@ td { padding: 10px 12px; }
   <nav>
     <button class="tab active" onclick="switchTab('products',this)">価格表</button>
     <button class="tab" onclick="switchTab('suppliers',this)">仕入先管理</button>
+    <button class="tab" onclick="switchTab('export',this)">海外向け価格表</button>
   </nav>
+
+  <!-- Tab 1: Price Table -->
   <main id="tab-products">
     <div class="filters">
       <input type="text" id="search" placeholder="商品名で検索..." oninput="debounceSearch()">
@@ -78,124 +90,190 @@ td { padding: 10px 12px; }
       </div>
     </div>
   </main>
+
+  <!-- Tab 2: Supplier Management -->
   <main id="tab-suppliers" style="display:none">
     <h2 style="font-size:18px;font-weight:600;margin-bottom:8px">仕入先一覧 / エイリアス管理</h2>
     <p style="font-size:13px;color:#888;margin-bottom:16px">仕入先名の表記揺れをエイリアスとして登録できます。カンマ区切りで複数入力してください。</p>
     <div id="supplierTable"></div>
   </main>
+
+  <!-- Tab 3: Export for Overseas Buyers -->
+  <main id="tab-export" style="display:none">
+    <h2 style="font-size:18px;font-weight:600;margin-bottom:8px">海外バイヤー向けプライスリスト</h2>
+    <p style="font-size:13px;color:#888;margin-bottom:16px">英語名・カテゴリ・販売価格を設定し、Googleスプレッドシートに出力できます。</p>
+
+    <div class="export-actions">
+      <button class="btn btn-blue" onclick="autoTranslate()">一括翻訳</button>
+      <button class="btn btn-orange" onclick="autoCategorize()">一括カテゴリ分類</button>
+      <button class="btn btn-green" onclick="exportSheets()">Google Sheetsに出力</button>
+      <select class="inline-select" id="exportCatFilter" onchange="loadExportProducts()">
+        <option value="">全カテゴリ</option>
+        <option value="pokemon">Pokemon</option>
+        <option value="onepiece">One Piece</option>
+        <option value="others">Others</option>
+      </select>
+      <span id="exportMsg"></span>
+    </div>
+    <div class="rates-info" id="ratesInfo"></div>
+    <a id="sheetLink" class="sheet-link" style="display:none" target="_blank"></a>
+
+    <div id="exportTable"></div>
+  </main>
 </div>
+
 <script>
 const API = '/api';
 let products=[], suppliers=[], total=0, page=0, sortBy='posted_at', sortOrder='desc';
+let exportProducts=[], exchangeRates={};
 const PAGE_SIZE = 50;
 let searchTimer;
 
+// === Tab 1: Products ===
 async function loadProducts() {
   const p = new URLSearchParams();
   const s = document.getElementById('search').value;
   const f = document.getElementById('supplierFilter').value;
   if(s) p.set('search', s);
   if(f) p.set('supplier_id', f);
-  p.set('sort_by', sortBy);
-  p.set('sort_order', sortOrder);
-  p.set('limit', PAGE_SIZE);
-  p.set('offset', page * PAGE_SIZE);
+  p.set('sort_by', sortBy); p.set('sort_order', sortOrder);
+  p.set('limit', PAGE_SIZE); p.set('offset', page * PAGE_SIZE);
   const r = await fetch(`${API}/products?${p}`);
   const d = await r.json();
-  products = d.products || [];
-  total = d.total || 0;
+  products = d.products || []; total = d.total || 0;
   renderProducts();
   document.getElementById('lastUpdated').textContent = '最終更新: ' + new Date().toLocaleTimeString('ja-JP');
 }
-
 async function loadSuppliers() {
-  const r = await fetch(`${API}/suppliers`);
-  suppliers = await r.json();
-  renderSupplierFilter();
-  renderSuppliers();
+  const r = await fetch(`${API}/suppliers`); suppliers = await r.json();
+  renderSupplierFilter(); renderSuppliers();
 }
-
 function renderProducts() {
   document.getElementById('productCount').textContent = `${total} 件の商品`;
-  if(!products.length) { document.getElementById('productTable').innerHTML = '<div class="empty">商品データがありません</div>'; document.getElementById('pagination').innerHTML=''; return; }
+  if(!products.length) { document.getElementById('productTable').innerHTML='<div class="empty">商品データがありません</div>'; document.getElementById('pagination').innerHTML=''; return; }
   const icon = (k) => sortBy===k ? (sortOrder==='asc'?' ▲':' ▼') : '';
   let h = '<table><thead><tr>';
-  [['supplier_name','仕入先'],['product_name','商品名'],['price','価格'],['quantity','数量'],['posted_at','投稿日時']].forEach(([k,l])=>{
-    h += `<th onclick="doSort('${k}')">${l}${icon(k)}</th>`;
-  });
+  [['supplier_name','仕入先'],['product_name','商品名'],['price','価格'],['quantity','数量'],['posted_at','投稿日時']].forEach(([k,l])=>{ h+=`<th onclick="doSort('${k}')">${l}${icon(k)}</th>`; });
   h += '<th></th></tr></thead><tbody>';
   products.forEach(p => {
     const d = p.posted_at ? new Date(p.posted_at).toLocaleString('ja-JP',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}) : '';
-    h += `<tr><td>${esc(p.supplier_name)}</td><td style="font-weight:500">${esc(p.product_name)}</td><td class="price">${p.price.toLocaleString()}円</td><td class="qty">${p.quantity!=null?p.quantity:'-'}</td><td class="date">${d}</td><td><button class="del-btn" onclick="delProduct(${p.id},'${esc(p.product_name)}')">×</button></td></tr>`;
+    const catBadge = p.category ? `<span class="cat-${p.category}">${p.category}</span> ` : '';
+    h += `<tr><td>${esc(p.supplier_name)}</td><td style="font-weight:500">${catBadge}${esc(p.product_name)}</td><td class="price">${p.price.toLocaleString()}円</td><td class="qty">${p.quantity!=null?p.quantity:'-'}</td><td class="date">${d}</td><td><button class="del-btn" onclick="delProduct(${p.id},'${esc(p.product_name)}')">×</button></td></tr>`;
   });
   h += '</tbody></table>';
   document.getElementById('productTable').innerHTML = h;
   const tp = Math.ceil(total/PAGE_SIZE);
-  document.getElementById('pagination').innerHTML = tp>1 ? `<button class="btn" ${page===0?'disabled':''} onclick="page--;loadProducts()">前へ</button><span style="font-size:13px;color:#666">${page+1} / ${tp}</span><button class="btn" ${page>=tp-1?'disabled':''} onclick="page++;loadProducts()">次へ</button>` : '';
+  document.getElementById('pagination').innerHTML = tp>1 ? `<button class="btn" ${page===0?'disabled':''} onclick="page--;loadProducts()">前へ</button><span style="font-size:13px;color:#666">${page+1}/${tp}</span><button class="btn" ${page>=tp-1?'disabled':''} onclick="page++;loadProducts()">次へ</button>` : '';
 }
-
 function renderSupplierFilter() {
-  const sel = document.getElementById('supplierFilter');
-  const v = sel.value;
+  const sel = document.getElementById('supplierFilter'); const v = sel.value;
   sel.innerHTML = '<option value="">全仕入先</option>' + suppliers.map(s=>`<option value="${s.id}">${esc(s.name)}</option>`).join('');
   sel.value = v;
 }
-
 function renderSuppliers() {
   if(!suppliers.length) { document.getElementById('supplierTable').innerHTML='<div class="empty">仕入先データがありません</div>'; return; }
-  let h = '<table class="supplier-table"><thead><tr><th>正式名</th><th>エイリアス（別名）</th><th>操作</th></tr></thead><tbody>';
-  suppliers.forEach(s => {
-    h += `<tr><td>${esc(s.name)}</td><td id="alias-display-${s.id}">${s.aliases.length?esc(s.aliases.join(', ')):'-'}</td><td id="alias-action-${s.id}"><button class="btn-edit" onclick="editAlias(${s.id},'${esc(s.aliases.join(', '))}')">編集</button></td></tr>`;
-  });
+  let h = '<table><thead><tr><th>正式名</th><th>エイリアス（別名）</th><th style="width:100px">操作</th></tr></thead><tbody>';
+  suppliers.forEach(s => { h+=`<tr><td>${esc(s.name)}</td><td id="alias-d-${s.id}">${s.aliases.length?esc(s.aliases.join(', ')):'-'}</td><td id="alias-a-${s.id}"><button class="btn-edit" onclick="editAlias(${s.id},'${esc(s.aliases.join(', '))}')">編集</button></td></tr>`; });
   h += '</tbody></table>';
   document.getElementById('supplierTable').innerHTML = h;
 }
-
-function editAlias(id, current) {
-  document.getElementById(`alias-display-${id}`).innerHTML = `<input class="alias-input" id="alias-input-${id}" value="${current}" placeholder="仕入先A, 仕入A, SupplierA">`;
-  document.getElementById(`alias-action-${id}`).innerHTML = `<div style="display:flex;gap:6px"><button class="btn-save" onclick="saveAlias(${id})">保存</button><button class="btn-cancel" onclick="loadSuppliers()">取消</button></div>`;
+function editAlias(id, cur) {
+  document.getElementById(`alias-d-${id}`).innerHTML=`<input class="alias-input" id="ai-${id}" value="${cur}">`;
+  document.getElementById(`alias-a-${id}`).innerHTML=`<div style="display:flex;gap:6px"><button class="btn-save" onclick="saveAlias(${id})">保存</button><button class="btn-cancel" onclick="loadSuppliers()">取消</button></div>`;
 }
-
 async function saveAlias(id) {
-  const v = document.getElementById(`alias-input-${id}`).value;
-  const aliases = v.split(/[,、]/).map(s=>s.trim()).filter(Boolean);
-  await fetch(`${API}/suppliers/${id}/aliases`, { method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify({aliases}) });
+  const v = document.getElementById(`ai-${id}`).value;
+  await fetch(`${API}/suppliers/${id}/aliases`, {method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({aliases:v.split(/[,、]/).map(s=>s.trim()).filter(Boolean)})});
   loadSuppliers();
 }
-
-function doSort(field) {
-  if(sortBy===field) sortOrder = sortOrder==='asc'?'desc':'asc';
-  else { sortBy=field; sortOrder='asc'; }
-  page=0; loadProducts();
-}
-
+function doSort(field) { if(sortBy===field) sortOrder=sortOrder==='asc'?'desc':'asc'; else { sortBy=field; sortOrder='asc'; } page=0; loadProducts(); }
 function debounceSearch() { clearTimeout(searchTimer); searchTimer=setTimeout(()=>{page=0;loadProducts()},300); }
-
-async function delProduct(id, name) {
-  if(!confirm(`「${name}」を削除しますか？`)) return;
-  await fetch(`${API}/products/${id}`, {method:'DELETE'});
-  refresh();
-}
-
+async function delProduct(id, name) { if(!confirm(`「${name}」を削除しますか？`)) return; await fetch(`${API}/products/${id}`,{method:'DELETE'}); refresh(); }
 async function submitManual() {
-  const text = document.getElementById('manualText').value;
-  if(!text.trim()) return;
-  const r = await fetch(`${API}/products/parse`, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({text})});
-  const d = await r.json();
-  const msg = document.getElementById('manualMsg');
+  const text = document.getElementById('manualText').value; if(!text.trim()) return;
+  const r = await fetch(`${API}/products/parse`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text})});
+  const d = await r.json(); const msg = document.getElementById('manualMsg');
   if(d.error) { msg.className='msg-err'; msg.textContent=d.error; }
   else { msg.className='msg-ok'; msg.textContent=`${d.supplier}: ${d.itemCount}件登録${d.replaced>0?' (旧'+d.replaced+'件を入替)':''}`; document.getElementById('manualText').value=''; refresh(); }
 }
 
+// === Tab 3: Export ===
+async function loadExportProducts() {
+  const r = await fetch(`${API}/products?limit=500&sort_by=category&sort_order=asc`);
+  const d = await r.json();
+  exportProducts = d.products || [];
+  const cat = document.getElementById('exportCatFilter').value;
+  if (cat) exportProducts = exportProducts.filter(p => p.category === cat);
+  renderExportTable();
+}
+async function loadRates() {
+  try {
+    const r = await fetch(`${API}/export/rates`); exchangeRates = await r.json();
+    const info = Object.entries(exchangeRates).filter(([k])=>!k.startsWith('_')).map(([k,v])=>`${k}: ${v.toFixed(4)}`).join(' | ');
+    document.getElementById('ratesInfo').textContent = `為替レート (1 JPY): ${info}`;
+  } catch(e) { document.getElementById('ratesInfo').textContent = '為替レート取得失敗'; }
+}
+function renderExportTable() {
+  if(!exportProducts.length) { document.getElementById('exportTable').innerHTML='<div class="empty">商品データがありません</div>'; return; }
+  let h = '<table><thead><tr><th>商品名(JP)</th><th>英語名</th><th>カテゴリ</th><th>仕入価格</th><th>販売価格(JPY)</th><th>USD</th><th>数量</th><th>操作</th></tr></thead><tbody>';
+  exportProducts.forEach(p => {
+    const missing = !p.english_name || !p.selling_price;
+    const usd = p.selling_price && exchangeRates.USD ? (p.selling_price * exchangeRates.USD).toFixed(2) : '-';
+    h += `<tr class="${missing?'missing':''}">`;
+    h += `<td style="font-weight:500;max-width:200px">${esc(p.product_name)}</td>`;
+    h += `<td><input class="inline-input" value="${esc(p.english_name||'')}" onchange="saveEN(${p.id},this.value)" placeholder="English name..."></td>`;
+    h += `<td><select class="inline-select" onchange="saveCat(${p.id},this.value)"><option value="pokemon" ${p.category==='pokemon'?'selected':''}>Pokemon</option><option value="onepiece" ${p.category==='onepiece'?'selected':''}>One Piece</option><option value="others" ${p.category==='others'?'selected':''}>Others</option></select></td>`;
+    h += `<td class="price">${p.price.toLocaleString()}</td>`;
+    h += `<td><input class="inline-num" type="number" value="${p.selling_price||''}" onchange="saveSP(${p.id},this.value)" placeholder="0"></td>`;
+    h += `<td class="price">${usd}</td>`;
+    h += `<td class="qty">${p.quantity!=null?p.quantity:'-'}</td>`;
+    h += `<td><button class="btn-save" onclick="saveSP(${p.id},this.parentElement.parentElement.querySelector('.inline-num').value)">保存</button></td>`;
+    h += '</tr>';
+  });
+  h += '</tbody></table>';
+  document.getElementById('exportTable').innerHTML = h;
+}
+async function saveEN(id, val) { await fetch(`${API}/products/${id}/english-name`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({englishName:val})}); }
+async function saveCat(id, val) { await fetch(`${API}/products/${id}/category`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({category:val})}); }
+async function saveSP(id, val) { await fetch(`${API}/products/${id}/selling-price`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({sellingPrice:parseInt(val)||null})}); }
+
+async function autoTranslate() {
+  const msg = document.getElementById('exportMsg');
+  msg.className='msg-ok'; msg.textContent='翻訳中...';
+  const r = await fetch(`${API}/products/translate`,{method:'POST'});
+  const d = await r.json();
+  msg.textContent = d.error ? d.error : `${d.translated}件を翻訳しました`;
+  loadExportProducts();
+}
+async function autoCategorize() {
+  const msg = document.getElementById('exportMsg');
+  const r = await fetch(`${API}/products/auto-categorize`,{method:'POST'});
+  const d = await r.json();
+  msg.className='msg-ok'; msg.textContent = `${d.updated}件のカテゴリを更新しました`;
+  loadExportProducts();
+}
+async function exportSheets() {
+  const msg = document.getElementById('exportMsg');
+  msg.className='msg-ok'; msg.textContent='Googleスプレッドシートに出力中...';
+  const r = await fetch(`${API}/export/sheets`,{method:'POST'});
+  const d = await r.json();
+  if(d.error) { msg.className='msg-err'; msg.textContent=d.error; return; }
+  msg.textContent='出力完了！';
+  const link = document.getElementById('sheetLink');
+  link.href = d.url; link.textContent = d.url; link.style.display = 'block';
+}
+
+// === Common ===
 function switchTab(tab, el) {
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   el.classList.add('active');
-  document.getElementById('tab-products').style.display = tab==='products'?'':'none';
-  document.getElementById('tab-suppliers').style.display = tab==='suppliers'?'':'none';
+  ['products','suppliers','export'].forEach(t => {
+    document.getElementById('tab-'+t).style.display = t===tab?'':'none';
+  });
+  if (tab==='export') { loadExportProducts(); loadRates(); }
 }
-
 function refresh() { loadProducts(); loadSuppliers(); }
-function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
 refresh();
 setInterval(refresh, 30000);
